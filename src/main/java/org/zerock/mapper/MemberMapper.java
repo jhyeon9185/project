@@ -9,4 +9,10 @@ import org.zerock.dto.MemberDTO;
 public interface MemberMapper {
 	
 	List<MemberDTO> findAll();
+	
+	MemberDTO findById(String id);
+	
+	int insert(MemberDTO memberDTO);
+	
+	int update(MemberDTO memberDTO);
 }

@@ -9,6 +9,7 @@
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/beans 
 		https://www.springframework.org/schema/beans/spring-beans.xsd
+		
 		http://www.springframework.org/schema/context 
 		https://www.springframework.org/schema/context/spring-context.xsd
 		
@@ -21,6 +22,7 @@
 		http://mybatis.org/schema/mybatis-spring
 		http://mybatis.org/schema/mybatis-spring.xsd"> 
 		
+	<bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
 	
 	<bean name="hikariConfig" class="com.zaxxer.hikari.HikariConfig">
 		<property name="driverClassName" value="com.mysql.cj.jdbc.Driver" />
@@ -56,6 +58,7 @@
 	<context:component-scan base-package="org.zerock.aop" />
 	
 	<aop:aspectj-autoproxy />
+	
 	
 </beans>
 
