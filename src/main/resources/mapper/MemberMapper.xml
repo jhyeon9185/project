@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.zerock.mapper.MemberMapper">
+	<resultMap id="memberMap" type="org.zerock.dto.MemberDTO">
+        <id property="id" column="id"/>
+        <result property="password" column="password"/>
+        <result property="name" column="name"/>
+        <result property="email" column="email"/>
+        <result property="phone" column="phone"/>
+        <result property="regdate" column="regdate"/>
+        <result property="enabled" column="enabled"/>
+    </resultMap>
+    
+	<select id="findAll" resultMap="memberMap">
+		select id, password, name, email, role, phone, regdate, enabled
+		from members
+	</select>
+	
+	
+</mapper>
