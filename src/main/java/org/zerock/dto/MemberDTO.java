@@ -4,8 +4,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import lombok.AllArgsConstructor;
@@ -44,6 +46,7 @@ public class MemberDTO implements UserDetails{
 	private String phone;
 	private LocalDateTime regdate;
 	private boolean enabled;
+	private AccountRole role;
 	
 	private List<AccountRole> roleNames;
 	
@@ -55,10 +58,21 @@ public class MemberDTO implements UserDetails{
 	}
 	
 	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        // null 체크를 추가하여 안전하게 스트림 처리
+        if (this.roleNames == null || this.roleNames.isEmpty()) {
+            // 만약 roleNames는 비어있는데 role 필드에 값이 있다면 처리
+            if (this.role != null) {
+                return List.of(new SimpleGrantedAuthority("ROLE_" + this.role.name()));
+            }
+            return new ArrayList<>();
+        }
+
+        return roleNames.stream()
+            .map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
+            .collect(Collectors.toList());
+    }
+
 	@Override
 	public String getPassword() {
 		// TODO Auto-generated method stub
@@ -67,7 +81,7 @@ public class MemberDTO implements UserDetails{
 	@Override
 	public String getUsername() {
 		// TODO Auto-generated method stub
-		return name;
+		return id;
 	}
 	
 	// 로그인이 튕기지 않게 하기 위해

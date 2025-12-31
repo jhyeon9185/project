@@ -26,3 +26,7 @@ INSERT INTO reply (bno, replyText, replyer) VALUES
 (1, '공지사항 확인했습니다.', 'user01');
 
 select * from members;
+
+select * from board;
+
+UPDATE members SET role = 'MEMBER' WHERE role IS NULL;

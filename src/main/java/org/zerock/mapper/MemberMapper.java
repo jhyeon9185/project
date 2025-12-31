@@ -15,4 +15,7 @@ public interface MemberMapper {
 	int insert(MemberDTO memberDTO);
 	
 	int update(MemberDTO memberDTO);
+	
+	boolean countById(String id);
+
 }
