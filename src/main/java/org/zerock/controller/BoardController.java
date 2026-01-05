@@ -1,7 +1,11 @@
 package org.zerock.controller;
 
 import java.security.Principal;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -14,9 +18,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.zerock.dto.BoardDTO;
 import org.zerock.dto.PageDTO;
+import org.zerock.dto.ReplyDTO;
 import org.zerock.service.BoardService;
+import org.zerock.service.ReplyService;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -27,6 +34,7 @@ import lombok.extern.log4j.Log4j2;
 public class BoardController {
 	
 	private final BoardService boardService;
+	private final ReplyService replyService; 
 	
 	@GetMapping("/list")
     public String list(Model model, 
@@ -36,19 +44,47 @@ public class BoardController {
 		PageDTO pageDTO = new PageDTO(page, size);
 		List<BoardDTO> boardList = boardService.findAllWithPaging(pageDTO);
 		
+		// 각 게시글의 댓글 수 조회
+		Map<Long, Integer> replyCountMap = new HashMap<>();
+		for (BoardDTO board : boardList) {
+			int replyCount = replyService.getReplyCount(board.getSeq().intValue());
+			replyCountMap.put(board.getSeq(), replyCount);
+		}
+		
 		model.addAttribute("boardList", boardList);
 		model.addAttribute("pageDTO", pageDTO);
+		model.addAttribute("replyCountMap", replyCountMap);
 		
         return "board/list";
     }
     
     @GetMapping("/{id}")
-    public String view(@PathVariable("id") Long id, Model model) {
+    public String view(@PathVariable("id") Long id, Model model, HttpSession session) {
+    	
     	BoardDTO board = boardService.findById(id);
-    	// 조회수 증가
-    	boardService.increaseViewCount(id);
+    	
+    	// 세션에서 조회 이력을 확인
+    	Set<Long> viewedPosts = (Set<Long>) session.getAttribute("viewedPosts");
+    	if (viewedPosts == null) {
+    		viewedPosts = new HashSet<>();
+    		session.setAttribute("viewedPosts", viewedPosts);
+    	}
+    	
+    	// 처음 조회할 때만 조회수 증가
+    	if (!viewedPosts.contains(id)) {
+    		boardService.increaseViewCount(id);
+    		viewedPosts.add(id);
+    	}
+    	
+    	// 댓글 관련 데이터 조회
+    	List<ReplyDTO> replies = replyService.getRepliesByBno(id.intValue());
+    	int replyCount = replyService.getReplyCount(id.intValue());
+    	
     	model.addAttribute("board", board);
-        return "board/view";
+    	model.addAttribute("replies", replies);
+    	model.addAttribute("replyCount", replyCount);
+    	
+    	return "board/view";
     }
     
     @GetMapping("/write")

@@ -1,0 +1,14 @@
+@charset "UTF-8";
+
+@font-face {
+    font-family: 'Pretendard';
+    src: url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+    /* 주의: 위 주소는 CSS 파일 경로이므로 @import를 쓰는 것이 더 일반적입니다. */
+}
+
+/* 또는 가장 확실한 방법 (@import 사용) */
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css");
+
+body {
+    font-family: 'Pretendard', sans-serif;
+}

@@ -43,7 +43,6 @@ CREATE TABLE board (
 );
 
 
-
 -- 댓글 테이블
 CREATE TABLE reply (
     rno INT AUTO_INCREMENT PRIMARY KEY,   -- 댓글 번호 (자동 증가)
@@ -56,6 +55,8 @@ CREATE TABLE reply (
     deflag BOOLEAN DEFAULT FALSE,         -- 삭제 여부 (논리적 삭제)
     FOREIGN KEY (bno) REFERENCES board(seq) ON DELETE CASCADE
 );
+
+select * from reply;
 
 select * from board;
 
@@ -136,3 +137,9 @@ INSERT INTO board (title, content, writer, regdate, hit, delflag) VALUES
 -- 데이터 확인
 SELECT COUNT(*) as total_posts FROM board WHERE delflag = FALSE;
 SELECT * FROM board WHERE delflag = FALSE ORDER BY regdate DESC LIMIT 10;
+
+
+select * from members;
+
+delete from members
+where id = "오창준주니어";

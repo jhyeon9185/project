@@ -52,6 +52,19 @@ public class MemberServiceImpl implements MemberService {
 	public List<MemberDTO> findAll() {
 		return memberMapper.findAll();
 	}
+
+	@Override
+	public void delete(String id) {
+		memberMapper.disableMember(id);  // 논리적 삭제 메서드 호출
+	}
+
+	 @Override
+	    public boolean deletePwd(String id, String password) {
+	        MemberDTO member = memberMapper.findById(id);
+	        if (member == null || !member.isEnabled()) return false;
+	        
+	        return passwordEncoder.matches(password, member.getPassword());
+	    }
 	
 	
 }

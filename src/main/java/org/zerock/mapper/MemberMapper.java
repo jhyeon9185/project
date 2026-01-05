@@ -16,6 +16,11 @@ public interface MemberMapper {
 	
 	int update(MemberDTO memberDTO);
 	
+	int delete(String id);
+	
+	int disableMember(String id); 
+	
 	boolean countById(String id);
+	
 
 }

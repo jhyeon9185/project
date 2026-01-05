@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.zerock.mapper.ReplyMapper">
+	<resultMap id="replyMap" type="org.zerock.dto.ReplyDTO" >
+		<id property="rno" column="rno" />
+		<result property="bno" column="bno"/>
+		<result property="replyText" column="replyText"/>
+		<result property="replyer" column="replyer"/>
+		<result property="replydate" column="replydate"/>
+		<result property="updatedate" column="updatedate"/>
+		<result property="deflag" column="deflag"/>
+	</resultMap>
+	
+	<!-- 목록 조회하기 -->
+	<select id="findByBno" resultMap="replyMap">
+		select rno, bno, replyText, replyer, replydate, updatedate, deflag
+		from reply
+		where bno = #{bno} and deflag = false
+		order by replydate asc
+	</select>
+	
+	<!-- 댓글 등록 -->
+	<insert id="insert" useGeneratedKeys="true" keyProperty="rno">
+		insert into reply (bno, replyText, replyer, deflag)
+		values(#{bno}, #{replyText}, #{replyer}, false)
+	</insert>
+	
+	<!-- 댓글 수정 -->
+	<update id="update">
+		update reply
+		set replyText = #{replyText}, updatedate = current_timestamp
+		where rno = #{rno} and deflag = false
+	</update>
+	
+	<!-- 댓글 삭제 -->
+	<update id="delete">
+		update reply
+		set deflag = true, updatedate = current_timestamp
+		where rno = #{rno} 
+	</update>
+	
+	<!-- 댓글 상세 조회 -->
+	<select id="findByRno" resultMap="replyMap">
+		select rno, bno, replyText, replyer, replydate, updatedate, deflag
+		from reply
+		where rno = #{rno} and deflag = false
+	</select>
+	
+	<!-- 특정 게시글 댓글 수 조회 -->
+	<select id="countByBno" resultType="int">
+		select count(*)
+		from reply
+		where bno = #{bno} and deflag = false
+	</select>
+	
+</mapper>

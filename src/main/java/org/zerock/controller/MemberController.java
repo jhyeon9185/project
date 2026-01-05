@@ -4,6 +4,7 @@ import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,10 +12,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.zerock.dto.AccountRole;
 import org.zerock.dto.MemberDTO;
 import org.zerock.service.MemberService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -102,4 +105,35 @@ public class MemberController {
 	    return "redirect:/board/list";
 	}
 
+	@GetMapping("/withdraw")
+	@PreAuthorize("isAuthenticated()")
+	public String withdrawForm() {
+		return "member/withdraw";
+	}
+	
+	@PostMapping("/withdraw")
+	@PreAuthorize("isAuthenticated()")
+	public String withdraw(@RequestParam("password") String password,
+			Principal principal,
+			RedirectAttributes redirectAttributes,
+			HttpServletRequest request) {
+		
+		String currentUserId = principal.getName();
+		
+		// 비번확인
+		if (!memberService.deletePwd(currentUserId, password)) {
+			redirectAttributes.addFlashAttribute("error", "비밀번호가 올바르지 않습니다");
+			return "redirect:/member/withdraw";
+		}
+		
+		memberService.delete(currentUserId);
+		
+		request.getSession().invalidate();
+		
+		redirectAttributes.addFlashAttribute("message", "회원탈퇴가 완료되었습니다");
+		
+		return "redirect:/home";
+	}
+			
+	
 }

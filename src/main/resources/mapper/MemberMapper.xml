@@ -45,4 +45,18 @@
     	WHERE id = #{id}
 	</select>
 	
+	<!--  회원 탈퇴 (물리적 삭제) -->
+	<update id="delete">
+	 	DELETE FROM members WHERE id = #{id}
+	</update>
+	
+	<!-- 회원 탈퇴 (논리적 삭제) -->
+	<update id="disableMember">
+		UPDATE members 
+		SET enabled = FALSE
+		WHERE id = #{id}
+	</update>
+	
+	
+	
 </mapper>

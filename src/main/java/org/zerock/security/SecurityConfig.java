@@ -31,7 +31,11 @@ public class SecurityConfig {
 
 	    http.authorizeHttpRequests(auth -> auth
 	        .requestMatchers(new AntPathRequestMatcher("/admin/**")).hasRole("ADMIN")
-	        .requestMatchers(new AntPathRequestMatcher("/board/**")).hasAnyRole("USER", "ADMIN", "MEMBER")
+	        .requestMatchers(new AntPathRequestMatcher("/board/write")).hasAnyRole("USER", "ADMIN", "MEMBER")
+	        .requestMatchers(new AntPathRequestMatcher("/board/modify/**")).hasAnyRole("USER", "ADMIN", "MEMBER")
+	        .requestMatchers(new AntPathRequestMatcher("/board/delete/**")).hasAnyRole("USER", "ADMIN", "MEMBER")
+	        .requestMatchers(new AntPathRequestMatcher("/board/**")).permitAll() 
+	        .requestMatchers(new AntPathRequestMatcher("/api/replies/**")).hasAnyRole("USER", "ADMIN", "MEMBER")  // 댓글 API는 로그인 필요
 	        .requestMatchers(
 	            new AntPathRequestMatcher("/"),
 	            new AntPathRequestMatcher("/home"),
@@ -43,7 +47,8 @@ public class SecurityConfig {
 	    );
 
 	    http.formLogin(config -> {
-	        config.loginPage("/member/login"); // ⚠️ 여기도 통일
+	        config.loginPage("/member/login"); 
+	        config.failureUrl("/member/login?error=true");
 	        config.successHandler(new CustomLoginSuccessHandler());
 	    });
 

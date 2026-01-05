@@ -27,10 +27,11 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
 		    SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
 		    
 		    if(savedRequest != null) {
-		        // 원래 요청했던 페이지로 이동
+		    	
 		        response.sendRedirect(savedRequest.getRedirectUrl());
+		        
 		    } else {
-		        // 기본 페이지 설정
+		    	
 		        if(isAdmin) {
 		            response.sendRedirect("/admin");
 		        } else {

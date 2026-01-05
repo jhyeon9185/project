@@ -14,6 +14,10 @@ public interface MemberService {
 
 	void update(MemberDTO memberDTO);
 	
+	void delete(String id);
+	
+	boolean deletePwd(String id, String password);
+	
 	List<MemberDTO> findAll();
 
 }
